@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en-US"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en-US"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en-US"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" lang="en-US"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!--><html lang="en-US"><!--<![endif]-->
+<head>
+    <title>DeeDee Project</title>
+
+    <meta charset="UTF-8">
+
+    <!--[if IE]>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <link rel="stylesheet" type="text/css" href="css/deedee.ie.css" media="all" />
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="css/deedee.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="css/shjs_darkblue.min.css" media="all" />
+    <link rel="shortcut icon" href="images/favicon.ico" />
+
+    <!--[if lt IE 9]>
+        <script src="js/html5.js" type="text/javascript"></script>
+    <![endif]-->
+</head>
+<body onload="sh_highlightDocument();">
+    <div id="wrapper">
+        <header>
+            <h1>DeeDee Project</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="#basic">Basic</a></li>
+                <li><a href="#ruby">Ruby</a></li>
+                <li><a href="#php">PHP</a></li>
+                <li><a href="#mysql">MySQL</a></li>
+                <li><a href="#nginx">nginx</a></li>
+                <li><a href="#mail">mail</a></li>
+                <li><a href="#openvpn">OpenVPN</a></li>
+                <li><a href="#nfs">NFS</a></li>
+            </ul>
+        </nav>
+        <p>DeeDee is a simple set of scripts, instructions and configuration files which is aimed to help you to configure your own Debian machine. It was born, when <a href="http://www.rzegocki.pl/" target="_blank">it's author</a> had enough of being spied by <a href="http://www.gmail.com/" target="_blank">his e-mail provider</a>, <a href="http://www.facebook.com/" target="_blank">his personal data keeper</a> and <a href="http://www.rackspace.com/" target="_blank">provider of his other services</a>. So he bought an ATOM machine and <a href="http://www.youtube.com/watch?v=LrQ2pKMwQC4" target="_blank">it has begun</a>.</p>
+        <p>But please, keep in mind, that this project is for (at-least) semi-advanced Linux Administrators, who knows what they're doing, but just want to have all this stuff in one place. Some of the files have to be edited anyway (with your domain, IP address or some other parameters) and it's almost sure, that something will break up in the progress. Oh! And don't forget to restart connected services after each section.</p>
+        <section id="basic">
+            <h2>Installation and basic settings</h2>
+            <p>On other Linux machine, download <a href="http://www.debian.org/distrib/netinst" target="_blank">Debian netinst</a> and put it on USB</p>
+            <pre class="sh_sh root">cat debian-netinst.iso > /dev/sdb # /dev/sdb is your USB device</pre>
+            <p>Next install Debian. If you plan, to treat this document as a step by step guide, install it on LVM volume with all directories separated (<kbd>/home</kbd>, <kbd>/var</kbd>, etc.) and without any extra packages. After installation make some final adjustments, create a normal "godlike" user (who will have sudo access and so on), install necessary packages and (optionally) <a href="https://github.com/robbyrussell/oh-my-zsh/" target="_blank">oh-my-zsh</a>.</p>
+            <pre class="sh_sh root"># Disable installation of recommended packages - for example, most of the time, we don't want 3/4 of Xserver while installing vim
+echo 'APT::Install-Recommends "0";' > /etc/apt/apt.conf.d/00norecommends 
+
+apt-get update
+apt-get install mc openssh-client openssh-server wakeonlan curl build-essential zsh git subversion vim less psmisc unzip unrar ntp \
+                ntfs-3g screen ftp rsync</pre>
+            <pre class="sh_sh user"># Optionally
+curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+chsh -s /bin/zsh
+echo "export EDITOR=/usr/bin/vim" >> ~/.zshrc # or any other prefered</pre>
+            <ul class="files">
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/motd">/etc/motd</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/home/user/.mc/ini">/home/user/.mc/ini</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/root/.mc/ini">/root/.mc/ini</a></li>
+                <li class="opt"><a href="https://github.com/ajgon/DeeDee/blob/master/home/user/.zshrc">/home/user/.zshrc</a></li>
+            </ul>
+        </section>
+        <section id="ruby">
+            <h2>RVM and Ruby</h2>
+            <pre class="sh_sh root">apt-get install zlib1g zlib1g-dev libssl-dev libcurl4-openssl-dev libpcre3-dev checkinstall libmysqlclient-dev
+mkdir /home/rails
+chown www-data:www-data /home/rails
+chmod 2770 /home/rails</pre>
+</pre>
+            <pre class="sh_sh user">curl -L https://get.rvm.io | bash -s stable
+rvm install 1.9.3 --with-openssl-dir=/usr
+rvm use 1.9.3
+rvm gemset create passenger
+rvm use 1.9.3@passenger
+gem install passenger</pre>
+        </section>
+        <section id="php">
+            <h2>PHP FPM</h2>
+            <pre class="sh_sh root">echo "deb http://packages.dotdeb.org stable all" >> /etc/apt/sources.list
+wget http://www.dotdeb.org/dotdeb.gpg
+cat dotdeb.gpg | apt-key add -
+rm dotdeb.gpg
+apt-get install php5-fpm php5-suhosin php5-mysql php5-mcrypt php5-intl # add another extensions if necessary</pre>
+            <ul class="files">
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/php5/fpm/pool.d/www.conf">/etc/php5/fpm/pool.d/www.conf</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/php5/fpm/php.ini">/etc/php5/fpm/php.ini</a></li>
+            </ul>
+        </section>
+        <section id="mysql">
+            <h2>MySQL</h2>
+            <pre class="sh_sh root">apt-get install mysql-server-5.1
+mysql -u root -p</pre>
+            <pre class="sh_sh mysql">-- add all interfaces you plan to use, don't rely on '%'!
+GRANT CREATE, DROP, LOCK TABLES, REFERENCES, EVENT, ALTER, DELETE, INDEX, INSERT, SELECT, UPDATE, CREATE TEMPORARY TABLES, TRIGGER, 
+      CREATE VIEW, SHOW VIEW ON *.* TO 'local'@'localhost' IDENTIFIED BY '&lt;password&gt;';
+GRANT CREATE, DROP, LOCK TABLES, REFERENCES, EVENT, ALTER, DELETE, INDEX, INSERT, SELECT, UPDATE, CREATE TEMPORARY TABLES, TRIGGER, 
+      CREATE VIEW, SHOW VIEW ON *.* TO 'local'@'127.0.0.1' IDENTIFIED BY '&lt;password&gt;';
+FLUSH PRIVILEGES;</pre>
+        </section>
+        <section id="nginx">
+            <h2>nginx</h2>
+            <pre class="sh_sh root">mkdir /home/packages
+chmod 700 /home/packages
+cd /tmp
+wget http://nginx.org/download/nginx-1.2.2.tar.gz # latest stable
+tar -xzvf nginx-1.2.2.tar.gz
+cd nginx-1.2.2
+
+# skip last parameter if you don't plan to use Passenger or Ruby at all
+./configure --prefix=/usr --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock \
+            --http-client-body-temp-path=/var/spool/nginx/client_body_temp --http-proxy-temp-path=/var/spool/nginx/proxy_temp \
+            --http-fastcgi-temp-path=/var/spool/nginx/fastcgi_temp --http-log-path=/var/log/nginx/access.log \
+            --error-log-path=/var/log/nginx/error.log --user=www-data --group=www-data --with-http_ssl_module --with-ipv6 \
+            --with-http_gzip_static_module --with-ipv6 --with-pcre --with-http_realip_module \
+            --add-module="$HOME/.rvm/gems/ruby-1.9.3-p0@passenger/gems/passenger-3.0.11/ext/nginx"
+make
+checkinstall -D make install
+mkdir /etc/nginx /var/log/nginx /var/spool/nginx
+chown -R www-data:www-data /var/log/nginx /var/spool/nginx
+mv /tmp/nginx-1.2.2/nginx_1.2.2-1_amd64.deb /home/packages
+mkdir /home/htdocs
+chown www-data:www-data /home/htdocs
+chmod 2755 /home/htdocs</pre>
+            <ul class="files">
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/nginx">/etc/nginx/*</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/init.d/nginx">/etc/init.d/nginx</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/home/htdocs">/home/htdocs/*</a></li>
+            </ul>
+            <pre class="sh_sh root">
+chmod 755 /etc/init.d/nginx
+/etc/init.d/nginx start
+update-rc.d -f nginx defaults
+chown -R www-data:www-data /home/htdocs</pre>
+        </section>
+        <section id="mail">
+            <h2>Mail</h2>
+            <h3>Dovecot</h3>
+            <pre class="sh_sh root">apt-get install dovecot-common dovecot-imapd postfix</pre>
+            <ul class="files">
+                <li class="edit"><a href="https://github.com/ajgon/DeeDee/blob/master/etc/dovecot/dovecot.conf">/etc/dovecot/dovecot.conf</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/dovecot/keys">/etc/dovecot/keys/*</a></li>
+            </ul>
+            <pre class="sh_sh root">chmod 640 /etc/dovecot/keys/*
+groupadd vmail  
+useradd -g vmail -s /bin/false vmail
+touch /var/log/dovecot.log /var/log/dovecot-info.log
+chown vmail:vmail /var/log/dovecot*log
+chmod 600 /var/log/dovecot*log
+chmod 700 /home/vmail
+echo "user@example.com:`dovecotpw`" >> /etc/dovecot/passwd</pre>
+            <h3>Postfix</h3>
+            <pre class="sh_sh root">apt-get install postfix
+chmod 640 /etc/postfix/keys/*
+chown -R :postfix /etc/postfix/keys</pre>
+            <ul class="files">
+                <li class="edit"><a href="https://github.com/ajgon/DeeDee/blob/master/etc/postfix/main.cf">/etc/postfix/main.cf</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/postfix/master.cf">/etc/postfix/master.cf</a></li>
+            </ul>
+            <h3>Sieve</h3>
+            <pre class="sh_sh root">wget http://www.rename-it.nl/dovecot/1.2/dovecot-1.2-sieve-0.1.19.tar.gz  
+tar xzvf dovecot-1.2-sieve-0.1.19.tar.gz  
+cd dovecot-1.2-sieve-0.1.19  
+./configure --with-dovecot=/usr/lib/dovecot/ --prefix=/usr  
+make  
+make install</pre>
+            <ul class="files">
+                <li class="edit"><a href="https://github.com/ajgon/DeeDee/blob/master/home/user/.dovecot.sieve">/home/user/.dovecot.sieve</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/home/vmail/user@example.com/.dovecot.sieve">/home/vmail/user@example.com/.dovecot.sieve</a></li>
+            </ul>
+            <h3>SpamAssassin</h3>
+            <pre class="sh_sh root">apt-get install spamc spamassassin pyzor razor
+groupadd dcc  
+useradd -g dcc -s /bin/false -d /var/dcc dcc  
+wget http://www.dcc-servers.net/dcc/source/dcc-dccproc.tar.Z  
+tar xzvf dcc-dccproc.tar.Z  
+cd dcc-dccproc-1.3.142  
+./configure --with-uid=dcc  
+make  
+make install  
+chown -R dcc:dcc /var/dcc  
+ln -s /var/dcc/libexec/dccifd /usr/local/bin/dccif 
+groupdd spamd  
+useradd -g spamd -s /bin/false -d /var/lib/spamassassin spamd  
+mkdir -p /var/lib/spamassassin  
+chown spamd:spamd /var/lib/spamassassin -R</pre>
+            <ul class="files">
+                <li class="edit"><a href="https://github.com/ajgon/DeeDee/blob/master/etc/default/spamassassin">/etc/default/spamassassin</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/spamassassin/local.cf">/etc/spamassassin/local.cf</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/spamassassin/v310.pre">/etc/spamassasin/v310.pre</a></li>
+            </ul>
+            <pre class="sh_sh root">sa-update --no-gpg  
+/etc/init.d/spamassassin start
+/etc/init.d/postfix restart</pre>
+            <h3>RoundCube</h3>
+            <pre class="sh_sh root">cd /home/htdocs/example.com/super/_ssl/public
+wget http://downloads.sourceforge.net/project/roundcubemail/roundcubemail/0.7.1/roundcubemail-0.7.1.tar.gz\?r\=http%3A%2F%2Fwww.roundcube.net%2Fdownload\&amp;ts\=1330211473\&amp;use_mirror\=freefr -O roundcubemail-0.7.1.tar.gz
+tar -xzvf roundcubemail-0.7.1.tar.gz
+mv roundcubemail-0.7.1 mail
+chown -Rv o-rwx mail
+chown -Rv www-data:www-data mail
+echo "suhosin.session.encrypt=Off" >> /etc/php5/fpm/conf.d/suhosin.ini
+mysql -u root -p</pre>
+            <pre class="sh_sh mysql">CREATE DATABASE roundcubemail /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
+GRANT ALL PRIVILEGES ON roundcubemail.* TO roundcube@localhost IDENTIFIED BY '&lt;password&gt;';
+FLUSH PRIVILEGES;</pre>
+            <pre class="sh_sh root">
+mysql roundcubemail < SQL/mysql.initial.sql</pre>
+            <p>Now it's time for web part of the installation. Go to https://ssl.example.com/mail/installer/ and fill the form. Set SMTP server to tls://localhost. After finishing:</p>
+            <pre class="sh_sh root">chown www-data:www-data config/db.inc.php config/main.inc.php
+chmod 600 config/db.inc.php config/main.inc.php
+rm -rf installer/</pre>     
+        </section>
+        <section id="openvpn">
+            <h2>OpenVPN</h2>
+            <pre class="sh_sh root">apt-get install openvpn
+cd /etc/openvpn
+cp -r /usr/share/doc/openvpn/examples/easy-rsa .
+cd easy-rsa/2.0
+vim vars  # change KEY_SIZE=2048
+. ./vars
+./clean-all
+./build-ca
+./build-key-server server
+./build-dh
+./build-key &lt;client-name&gt; # all clients
+cp keys/ca.crt keys/server.crt keys/server.key keys/ca.key keys/dh2048.pem ../../</pre>
+            <ul class="files">
+                <li class="edit"><a href="https://github.com/ajgon/DeeDee/blob/master/etc/openvpn/server.conf">/etc/openvpn/server.conf</a></li>
+                <li><a href="https://github.com/ajgon/DeeDee/blob/master/etc/sysctl.conf">/etc/sysctl.conf</a></li>
+            </ul>
+            <pre class="sh_sh root">sysctl -p /etc/sysctl.conf
+iptables -t nat -A POSTROUTING -j MASQUERADE</pre>
+        </section>
+        <section id="nfs">
+            <h2>NFS</h2>
+            <pre class="sh_sh root">apt-get install nfs-server
+mkdir -p /home/nfs/data /home/data</pre>
+            <ul class="files">
+                <li class="edit"><a href="https://github.com/ajgon/DeeDee/blob/master/etc/exports">/etc/exports</a></li>
+                <li class="edit"><a href="https://github.com/ajgon/DeeDee/blob/master/etc/fstab">/etc/fstab</a></li>
+            </ul>
+        </section>
+    </div>
+    <script type="text/javascript" src="js/shjs.min.js"></script>
+    <script type="text/javascript" src="js/shjs_sh.min.js"></script>
+</body>
+</html>
