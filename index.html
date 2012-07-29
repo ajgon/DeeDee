@@ -264,6 +264,7 @@ chown -Rv o-rwx mail
 chown -Rv www-data:www-data mail
 echo "suhosin.session.encrypt=Off" >> /etc/php5/fpm/conf.d/suhosin.ini
 mysql -u root -p</pre>
+            <span class="label label-warning">In MySQL</span>
             <pre class="prettyprint linenums mysql">CREATE DATABASE roundcubemail /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
 GRANT ALL PRIVILEGES ON roundcubemail.* TO roundcube@localhost IDENTIFIED BY '&lt;password&gt;';
 FLUSH PRIVILEGES;</pre>
