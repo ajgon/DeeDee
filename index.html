@@ -28,7 +28,7 @@
         <nav class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="brand" href="#">DeeDee</a>
+                    <a class="brand" href="http://github.com/ajgon/DeeDee">DeeDee</a>
                     <div class="nav-collapse">
                         <ul class="nav">
                             <li><a href="#basic">Basic</a></li>
@@ -141,7 +141,7 @@ cd nginx-1.2.2
             --http-fastcgi-temp-path=/var/spool/nginx/fastcgi_temp --http-log-path=/var/log/nginx/access.log \
             --error-log-path=/var/log/nginx/error.log --user=www-data --group=www-data --with-http_ssl_module --with-ipv6 \
             --with-http_gzip_static_module --with-ipv6 --with-pcre --with-http_realip_module \
-            --add-module="$HOME/.rvm/gems/ruby-1.9.3-p0@passenger/gems/passenger-3.0.11/ext/nginx"
+            --add-module="/home/user/.rvm/gems/ruby-1.9.3-p0@passenger/gems/passenger-3.0.11/ext/nginx"
 make
 checkinstall -D make install
 mkdir /etc/nginx /var/log/nginx /var/spool/nginx
@@ -290,6 +290,7 @@ mkdir -p /home/nfs/data /home/data</pre>
         </section>
     </div>
     <img src="images/deedee.jpg" id="deedee" alt="OOOOH! What does THIS button do?" />
+    <a href="https://github.com/ajgon/DeeDee"><img id="github" src="images/github.png" alt="Fork me on GitHub"></a>
     <script type="text/javascript" src="js/prettify.js"></script>
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.scrollTo.min.js"></script>
