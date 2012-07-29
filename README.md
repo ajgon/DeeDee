@@ -24,12 +24,13 @@ adjustments, create a normal "godlike" user (who will have sudo access and so on
 (optionally) [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh/).
 
     # As Root
-    # Disable installation of recommended packages - for example, most of the time, we don't want 3/4 of Xserver while installing vim
+    # Disable installation of recommended packages - for example, most of the time,
+    # we don't want 3/4 of Xserver while installing vim
     echo 'APT::Install-Recommends "0";' > /etc/apt/apt.conf.d/00norecommends
 
     apt-get update
-    apt-get install mc openssh-client openssh-server wakeonlan curl build-essential zsh git subversion vim less psmisc unzip unrar \
-    ntp ntfs-3g screen ftp rsync
+    apt-get install mc openssh-client openssh-server wakeonlan curl build-essential zsh git subversion vim less psmisc \
+    unzip unrar ntp ntfs-3g screen ftp rsync
 
     # As User (Optional)
     curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
@@ -69,7 +70,7 @@ adjustments, create a normal "godlike" user (who will have sudo access and so on
 * [/etc/php5/fpm/pool.d/www.conf](https://github.com/ajgon/DeeDee/blob/master/etc/php5/fpm/pool.d/www.conf)
 * [/etc/php5/fpm/php.ini](https://github.com/ajgon/DeeDee/blob/master/etc/php5/fpm/php.ini)
 
-MySQL
+# MySQL
 
     # As Root
     apt-get install mysql-server-5.1
@@ -77,10 +78,12 @@ MySQL
 
     -- In MySQL
     -- add all interfaces you plan to use, do not rely on '%'!
-    GRANT CREATE, DROP, LOCK TABLES, REFERENCES, EVENT, ALTER, DELETE, INDEX, INSERT, SELECT, UPDATE, CREATE TEMPORARY TABLES,
-    TRIGGER, CREATE VIEW, SHOW VIEW ON *.* [TO](https://github.com/ajgon/DeeDee/blob/masterTO) 'local'@'localhost' IDENTIFIED BY '<password>';
-    GRANT CREATE, DROP, LOCK TABLES, REFERENCES, EVENT, ALTER, DELETE, INDEX, INSERT, SELECT, UPDATE, CREATE TEMPORARY TABLES,
-    TRIGGER, CREATE VIEW, SHOW VIEW ON *.* [TO](https://github.com/ajgon/DeeDee/blob/masterTO) 'local'@'127.0.0.1' IDENTIFIED BY '<password>';
+    GRANT CREATE, DROP, LOCK TABLES, REFERENCES, EVENT, ALTER, DELETE, INDEX, INSERT, SELECT, UPDATE,
+    CREATE TEMPORARY TABLES, TRIGGER, CREATE VIEW, SHOW VIEW ON *.* TO 'local'@'localhost'
+    IDENTIFIED BY '<password>';
+    GRANT CREATE, DROP, LOCK TABLES, REFERENCES, EVENT, ALTER, DELETE, INDEX, INSERT, SELECT, UPDATE,
+    CREATE TEMPORARY TABLES, TRIGGER, CREATE VIEW, SHOW VIEW ON *.* TO 'local'@'127.0.0.1'
+    IDENTIFIED BY '<password>';
     FLUSH PRIVILEGES;
 
 # nginx built from scratch
@@ -94,12 +97,12 @@ MySQL
     cd nginx-1.2.2
 
     # skip last parameter if you don't plan to use Passenger or Ruby at all
-    ./configure --prefix=/usr --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx.lock \
-    --http-client-body-temp-path=/var/spool/nginx/client_body_temp --http-proxy-temp-path=/var/spool/nginx/proxy_temp \
-    --http-fastcgi-temp-path=/var/spool/nginx/fastcgi_temp --http-log-path=/var/log/nginx/access.log \
-    --error-log-path=/var/log/nginx/error.log --user=www-data --group=www-data --with-http_ssl_module --with-ipv6 \
-    --with-http_gzip_static_module --with-ipv6 --with-pcre --with-http_realip_module \
-    --add-module="/home/user/.rvm/gems/ruby-1.9.3-p0@passenger/gems/passenger-3.0.11/ext/nginx"
+    ./configure --prefix=/usr --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid \
+    --lock-path=/var/lock/nginx.lock --http-client-body-temp-path=/var/spool/nginx/client_body_temp \
+    --http-proxy-temp-path=/var/spool/nginx/proxy_temp --http-fastcgi-temp-path=/var/spool/nginx/fastcgi_temp \
+    --http-log-path=/var/log/nginx/access.log --error-log-path=/var/log/nginx/error.log --user=www-data \
+    --group=www-data --with-http_ssl_module --with-ipv6 --with-http_gzip_static_module --with-ipv6 --with-pcre \
+    --with-http_realip_module --add-module="/home/user/.rvm/gems/ruby-1.9.3-p0@passenger/gems/passenger-3.0.11/ext/nginx"
     make
     checkinstall -D make install
     mkdir /etc/nginx /var/log/nginx /var/spool/nginx
@@ -113,7 +116,9 @@ MySQL
 * [/etc/init.d/nginx](https://github.com/ajgon/DeeDee/blob/master/etc/init.d/nginx)
 * [/home/htdocs/*](https://github.com/ajgon/DeeDee/blob/master/home/htdocs/)
 
-    # As Root
+Then:
+
+    # As Root 
     chmod 755 /etc/init.d/nginx
     /etc/init.d/nginx start
     update-rc.d -f nginx defaults
@@ -138,6 +143,8 @@ MySQL
 * [/etc/openvpn/server.conf](https://github.com/ajgon/DeeDee/blob/master/etc/openvpn/server.conf) Needs Edit
 * [/etc/sysctl.conf](https://github.com/ajgon/DeeDee/blob/master/etc/sysctl.conf)
 
+Then:
+
     # As Root
     sysctl -p /etc/sysctl.conf
     iptables -t nat -A POSTROUTING -j MASQUERADE
@@ -151,6 +158,8 @@ MySQL
 
 * [/etc/dovecot/dovecot.conf](https://github.com/ajgon/DeeDee/blob/master/etc/dovecot/dovecot.conf) Needs Edit
 * [/etc/dovecot/keys/*](https://github.com/ajgon/DeeDee/blob/master/etc/dovecot/keys/)
+
+Then:
 
     # As Root
     chmod -R 640 /etc/dovecot/keys/
@@ -208,6 +217,8 @@ MySQL
 * [/etc/spamassassin/local.cf](https://github.com/ajgon/DeeDee/blob/master/etc/spamassassin/local.cf)
 * [/etc/spamassasin/v310.pre](https://github.com/ajgon/DeeDee/blob/master/etc/spamassasin/v310.pre)
 
+Then:
+
     # As Root
     sa-update --no-gpg
     /etc/init.d/spamassassin start
@@ -227,7 +238,7 @@ MySQL
 
     -- In MySQL
     CREATE DATABASE roundcubemail /*!40101 CHARACTER SET utf8 COLLATE utf8_general_ci */;
-    GRANT ALL PRIVILEGES ON roundcubemail.* [TO](https://github.com/ajgon/DeeDee/blob/masterTO) roundcube@localhost IDENTIFIED BY '<password>';
+    GRANT ALL PRIVILEGES ON roundcubemail.* TO roundcube@localhost IDENTIFIED BY '<password>';
     FLUSH PRIVILEGES;
 
     # As Root
