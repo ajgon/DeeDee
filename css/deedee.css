@@ -1,0 +1,15 @@
+body {
+    margin-top: 60px;
+}
+
+#wrapper {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+#deedee {
+    position: fixed;
+    top: 80px;
+    right: 0;
+}
+
