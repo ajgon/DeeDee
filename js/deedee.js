@@ -14,9 +14,8 @@
     prettyPrint();
 
     $(window).resize(function() {
-        console.log(2);
         deedee_width = Math.min.apply(Math, [Math.floor(($(window).width() - $('#wrapper').width()) / 2 - 6), 445]);
-        if(deedee_width < 150) {
+        if(deedee_width < 125) {
             $('#deedee').hide();
         } else {
             $('#deedee').show().width(deedee_width);
