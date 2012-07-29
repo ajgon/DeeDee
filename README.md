@@ -118,7 +118,7 @@ adjustments, create a normal "godlike" user (who will have sudo access and so on
 
 Then:
 
-    # As Root 
+    # As Root
     chmod 755 /etc/init.d/nginx
     /etc/init.d/nginx start
     update-rc.d -f nginx defaults
@@ -149,7 +149,7 @@ Then:
     sysctl -p /etc/sysctl.conf
     iptables -t nat -A POSTROUTING -j MASQUERADE
 
-# Mail with Dovecot + Postfix + Sieve + SpamAssassin + RoundCube
+# Mail with Dovecot/Postfix/Sieve/SpamAssassin/RoundCube
 
 ## Dovecot
 
